@@ -10,65 +10,81 @@
 body {
   font-family: 'Segoe UI', 'Yu Gothic UI', sans-serif;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  min-height: 100vh;
-  padding: 20px;
+  min-height: 100vh; padding: 20px;
 }
-
 .container {
-  max-width: 1000px;
-  margin: 0 auto;
-  background: #fff;
-  border-radius: 16px;
-  padding: 28px;
+  max-width: 1000px; margin: 0 auto; background: #fff;
+  border-radius: 16px; padding: 28px;
   box-shadow: 0 20px 60px rgba(0,0,0,0.25);
 }
-
 h1 { font-size: 20px; color: #2d3748; margin-bottom: 4px; }
 .subtitle { color: #718096; font-size: 12px; margin-bottom: 20px; }
 
-/* 任意タグ トグルパネル */
+/* ── パネル ── */
 .opt-panel {
-  background: #f7fafc;
-  border: 1.5px solid #e2e8f0;
-  border-radius: 10px;
-  padding: 14px 18px;
-  margin-bottom: 18px;
+  background: #f7fafc; border: 1.5px solid #e2e8f0;
+  border-radius: 10px; padding: 16px 18px; margin-bottom: 18px;
 }
-.opt-panel-title {
-  font-size: 11px;
-  font-weight: 700;
-  color: #718096;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  margin-bottom: 10px;
+.sec-title {
+  font-size: 11px; font-weight: 700; color: #718096;
+  text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px;
 }
+.divider { border: none; border-top: 1px solid #e2e8f0; margin: 14px 0; }
+
+/* 定義済み任意タグ ピル */
 .opt-pills { display: flex; flex-wrap: wrap; gap: 8px; }
-
 .pill {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  padding: 6px 14px;
-  background: #fff;
-  border: 1.5px solid #e2e8f0;
-  border-radius: 20px;
-  font-size: 13px;
-  cursor: pointer;
-  transition: all 0.2s;
-  user-select: none;
+  display: flex; align-items: center; gap: 5px;
+  padding: 6px 14px; background: #fff;
+  border: 1.5px solid #e2e8f0; border-radius: 20px;
+  font-size: 13px; cursor: pointer; transition: all 0.2s; user-select: none;
 }
-.pill:hover { border-color: #5a67d8; color: #5a67d8; }
-.pill.on { background: #ebf4ff; border-color: #5a67d8; color: #5a67d8; font-weight: 600; }
-.pill input { display: none; }
-.pill-icon { font-size: 12px; }
+.pill:hover  { border-color: #5a67d8; color: #5a67d8; }
+.pill.on     { background: #ebf4ff; border-color: #5a67d8; color: #5a67d8; font-weight: 600; }
+.pill input  { display: none; }
 
-/* テーブル */
+/* カスタムタグ 入力行 */
+.custom-row {
+  display: flex; gap: 8px; align-items: center; margin-bottom: 10px;
+}
+.custom-row input {
+  flex: 1; padding: 7px 12px; border: 1.5px solid #e2e8f0;
+  border-radius: 8px; font-size: 13px; font-family: inherit;
+  transition: border-color 0.2s;
+}
+.custom-row input:focus {
+  outline: none; border-color: #ed8936;
+  box-shadow: 0 0 0 3px rgba(237,137,54,0.15);
+}
+.btn-add-cst {
+  padding: 7px 16px; background: #ed8936; color: #fff;
+  border: none; border-radius: 8px; font-size: 13px;
+  font-weight: 600; cursor: pointer; font-family: inherit;
+  transition: all 0.2s; white-space: nowrap;
+}
+.btn-add-cst:hover { background: #dd6b20; transform: translateY(-1px); }
+
+/* カスタムタグ チップ */
+.custom-chips { display: flex; flex-wrap: wrap; gap: 7px; min-height: 10px; }
+.chip {
+  display: flex; align-items: center; gap: 6px;
+  padding: 5px 10px 5px 13px;
+  background: #fffaf0; border: 1.5px solid #f6ad55;
+  border-radius: 20px; font-size: 13px; color: #7b341e; font-weight: 600;
+}
+.chip-del {
+  background: none; border: none; cursor: pointer;
+  color: #c05621; font-size: 15px; line-height: 1;
+  padding: 0; transition: color 0.15s;
+}
+.chip-del:hover { color: #9c2600; }
+.no-custom { font-size: 12px; color: #a0aec0; font-style: italic; }
+
+/* ── テーブル ── */
 table { width: 100%; border-collapse: collapse; }
 thead th {
   background: #5a67d8; color: #fff;
-  padding: 10px 12px;
-  font-size: 12px; font-weight: 600;
-  text-align: left;
+  padding: 10px 12px; font-size: 12px; font-weight: 600; text-align: left;
 }
 thead th:first-child { border-radius: 8px 0 0 0; }
 thead th:last-child  { border-radius: 0 8px 0 0; }
@@ -77,19 +93,14 @@ tbody tr:nth-child(even) { background: #f7fafc; }
 tbody tr:hover { background: #ebf4ff; }
 td { padding: 8px; vertical-align: middle; border-bottom: 1px solid #e2e8f0; }
 
-.td-num { width: 32px; text-align: center; color: #a0aec0; font-size: 12px; }
-.td-tag { width: 200px; vertical-align: top; padding-top: 12px; }
-.tag-label {
-  font-family: 'Consolas', 'Courier New', monospace;
-  font-size: 13px; font-weight: 700; color: #2d3748;
-}
-.badge {
-  display: inline-block;
-  font-size: 10px; padding: 1px 7px;
-  border-radius: 10px; margin-top: 3px;
-}
-.req { background: #c6f6d5; color: #276749; }
-.opt { background: #e9d8fd; color: #6b46c1; }
+.td-num  { width: 32px; text-align: center; color: #a0aec0; font-size: 12px; }
+.td-tag  { width: 200px; vertical-align: top; padding-top: 11px; }
+.tag-lbl { font-family: 'Consolas','Courier New',monospace; font-size: 13px; font-weight: 700; color: #2d3748; }
+
+.badge   { display: inline-block; font-size: 10px; padding: 1px 7px; border-radius: 10px; margin-top: 3px; }
+.req     { background: #c6f6d5; color: #276749; }
+.opt     { background: #e9d8fd; color: #6b46c1; }
+.cst     { background: #feebc8; color: #7b341e; }
 
 textarea {
   width: 100%; padding: 8px 10px;
@@ -103,9 +114,9 @@ textarea:focus {
   box-shadow: 0 0 0 3px rgba(90,103,216,0.15);
 }
 
-/* 移動ボタン */
-.td-move { width: 48px; text-align: center; }
-.move-wrap { display: flex; flex-direction: column; gap: 3px; align-items: center; }
+/* 操作列 */
+.td-action { width: 52px; text-align: center; }
+.action-wrap { display: flex; flex-direction: column; align-items: center; gap: 3px; }
 .btn-mv {
   width: 26px; height: 22px;
   background: #edf2f7; color: #4a5568;
@@ -116,11 +127,19 @@ textarea:focus {
 }
 .btn-mv:hover:not(:disabled) { background: #5a67d8; color: #fff; border-color: #5a67d8; }
 .btn-mv:disabled { opacity: 0.2; cursor: default; }
+.btn-row-del {
+  width: 26px; height: 22px; margin-top: 2px;
+  background: #fff5f5; color: #e53e3e;
+  border: 1px solid #fed7d7; border-radius: 4px;
+  font-size: 12px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s;
+}
+.btn-row-del:hover { background: #e53e3e; color: #fff; border-color: #e53e3e; }
 
-/* ツールバー */
+/* ── ツールバー ── */
 .toolbar {
-  display: flex; gap: 10px;
-  margin: 16px 0 20px;
+  display: flex; gap: 10px; margin: 16px 0 20px;
   align-items: center; flex-wrap: wrap;
 }
 .btn {
@@ -130,29 +149,27 @@ textarea:focus {
   font-family: inherit; transition: all 0.2s;
 }
 .btn:hover { transform: translateY(-1px); }
-.btn-save     { background: #e2e8f0; color: #4a5568; }
+.btn-save       { background: #e2e8f0; color: #4a5568; }
 .btn-save:hover { background: #cbd5e0; }
 .btn-save.done  { background: #c6f6d5; color: #276749; }
-.btn-reset    { background: #fff; color: #e53e3e; border: 1.5px solid #fed7d7; }
-.btn-reset:hover { background: #fff5f5; }
-.btn-gen      { background: #5a67d8; color: #fff; margin-left: auto; }
-.btn-gen:hover { background: #4c51bf; box-shadow: 0 4px 12px rgba(90,103,216,0.4); }
-.save-ts { font-size: 11px; color: #a0aec0; }
+.btn-reset      { background: #fff; color: #e53e3e; border: 1.5px solid #fed7d7; }
+.btn-reset:hover{ background: #fff5f5; }
+.btn-gen        { background: #5a67d8; color: #fff; margin-left: auto; }
+.btn-gen:hover  { background: #4c51bf; box-shadow: 0 4px 12px rgba(90,103,216,0.4); }
+.save-ts        { font-size: 11px; color: #a0aec0; }
 
-/* 出力 */
+/* ── 出力 ── */
 .out-card {
-  margin-top: 20px;
-  border: 1.5px solid #c6f6d5;
-  border-radius: 12px; overflow: hidden;
-  display: none;
+  margin-top: 20px; border: 1.5px solid #c6f6d5;
+  border-radius: 12px; overflow: hidden; display: none;
 }
 .out-header {
   background: #f0fff4; padding: 12px 18px;
   display: flex; justify-content: space-between;
   align-items: center; flex-wrap: wrap; gap: 8px;
 }
-.out-title { font-weight: 700; color: #276749; font-size: 14px; }
-.copy-row  { display: flex; align-items: center; gap: 10px; }
+.out-title  { font-weight: 700; color: #276749; font-size: 14px; }
+.copy-row   { display: flex; align-items: center; gap: 10px; }
 .copy-badge {
   background: #c6f6d5; color: #276749;
   padding: 3px 10px; border-radius: 20px;
@@ -160,16 +177,14 @@ textarea:focus {
   opacity: 0; transition: opacity 0.3s;
 }
 .copy-badge.on { opacity: 1; }
-.btn-copy { background: #38a169; color: #fff; padding: 10px 22px; font-size: 14px; }
+.btn-copy       { background: #38a169; color: #fff; padding: 10px 22px; font-size: 14px; }
 .btn-copy:hover { background: #2f855a; box-shadow: 0 4px 12px rgba(56,161,105,0.4); }
 
 #outputText {
-  display: block; width: 100%;
-  padding: 14px 18px; border: none;
-  font-family: 'Consolas', 'Courier New', monospace;
+  display: block; width: 100%; padding: 14px 18px; border: none;
+  font-family: 'Consolas','Courier New',monospace;
   font-size: 13px; line-height: 1.75;
-  background: #fafafa; resize: vertical; min-height: 260px;
-  color: #2d3748;
+  background: #fafafa; resize: vertical; min-height: 260px; color: #2d3748;
 }
 #outputText:focus { outline: none; }
 .char-count {
@@ -183,42 +198,54 @@ textarea:focus {
 <div class="container">
   <h1>🚀 プロンプトジェネレーター</h1>
   <p class="subtitle">
-    必須タグ（4）は常時表示 ／ 任意タグ（4）はクリックで追加 ／ ▲▼で順番変更 ／ 順番は保存可
+    必須(4) + 定義済み任意(4) + カスタムタグ（自由追加）／ ▲▼で順番変更 ／ 💾で順番保存
   </p>
 
-  <!-- 任意タグ切り替え -->
   <div class="opt-panel">
-    <div class="opt-panel-title">任意タグ — クリックで追加 / 非表示</div>
+
+    <!-- 定義済み任意タグ -->
+    <div class="sec-title">定義済み任意タグ — クリックでON / OFF</div>
     <div class="opt-pills" id="optPills"></div>
+
+    <hr class="divider">
+
+    <!-- カスタムタグ -->
+    <div class="sec-title">カスタムタグ — 自由に追加（自動保存）</div>
+    <div class="custom-row">
+      <input type="text" id="customInput"
+        placeholder="タグ名を入力して Enter（例: Audience, Goal, Background…）"
+        maxlength="60">
+      <button class="btn-add-cst" id="btnAddCst">＋ 追加</button>
+    </div>
+    <div class="custom-chips" id="customChips"></div>
+
   </div>
 
-  <!-- 入力テーブル -->
   <table>
     <thead>
       <tr>
         <th style="width:32px">#</th>
         <th style="width:200px">タグ</th>
         <th>内容</th>
-        <th style="width:48px; text-align:center">順番</th>
+        <th style="width:52px; text-align:center">操作</th>
       </tr>
     </thead>
     <tbody id="tbody"></tbody>
   </table>
 
   <div class="toolbar">
-    <button class="btn btn-save" id="saveBtn" onclick="saveOrder()">💾 タグ順を保存</button>
-    <button class="btn btn-reset" onclick="resetOrder()">↺ リセット</button>
+    <button class="btn btn-save" id="saveBtn">💾 タグ順を保存</button>
+    <button class="btn btn-reset" id="resetBtn">↺ リセット</button>
     <span class="save-ts" id="saveTs"></span>
-    <button class="btn btn-gen" onclick="generate()">⚡ プロンプト生成</button>
+    <button class="btn btn-gen" id="genBtn">⚡ プロンプト生成</button>
   </div>
 
-  <!-- 出力 -->
   <div class="out-card" id="outCard">
     <div class="out-header">
       <span class="out-title">📄 生成されたプロンプト</span>
       <div class="copy-row">
         <span class="copy-badge" id="copyBadge">✅ コピーしました！</span>
-        <button class="btn btn-copy" id="copyBtn" onclick="copyAll()">📋 ワンクリックコピー</button>
+        <button class="btn btn-copy" id="copyBtn">📋 ワンクリックコピー</button>
       </div>
     </div>
     <textarea id="outputText" readonly></textarea>
@@ -227,25 +254,36 @@ textarea:focus {
 </div>
 
 <script>
-// ─── 定数 ──────────────────────────────────────────────
+// ── 定数 ─────────────────────────────────────────────────
 const REQUIRED = ['Objective', 'Persona', 'Instructions', 'Context'];
 const OPTIONAL  = ['Constraints', 'Response format', 'Reasoning steps', 'Examples'];
-const ALL_TAGS  = [...REQUIRED, ...OPTIONAL];
 
-const LS_ORDER = 'pg_tag_order_v2';
-const LS_OPT   = 'pg_optional_v2';
+const LS_ORDER  = 'pg_order_v3';
+const LS_OPT    = 'pg_opt_v3';
+const LS_CUSTOM = 'pg_custom_v3';
 
-// ─── 状態 ──────────────────────────────────────────────
-let tagOrder      = loadOrder();        // 全タグの並び順（非表示のものも保持）
-let activeOptional = new Set(loadOpt()); // 現在表示中の任意タグ
+// ── 状態 ─────────────────────────────────────────────────
+let customTags     = loadCustom();            // カスタムタグ（自動保存）
+let tagOrder       = loadOrder();             // 全タグの並び順
+let activeOptional = new Set(loadOpt());      // 有効な定義済み任意タグ
 
-// ─── LocalStorage ─────────────────────────────────────
+// ── LocalStorage ─────────────────────────────────────────
+function loadCustom() {
+  try {
+    const s = JSON.parse(localStorage.getItem(LS_CUSTOM));
+    if (Array.isArray(s)) return s.filter(t => typeof t === 'string' && t.trim());
+  } catch {}
+  return [];
+}
+
 function loadOrder() {
   try {
     const s = JSON.parse(localStorage.getItem(LS_ORDER));
     if (Array.isArray(s)) {
-      const filtered = s.filter(t => ALL_TAGS.includes(t));
-      // 漏れた必須タグを末尾補完
+      const custom   = loadCustom();
+      const allKnown = [...REQUIRED, ...OPTIONAL, ...custom];
+      const filtered = s.filter(t => allKnown.includes(t));
+      // 必須タグが漏れていたら補完
       REQUIRED.forEach(t => { if (!filtered.includes(t)) filtered.push(t); });
       return filtered;
     }
@@ -261,31 +299,48 @@ function loadOpt() {
   return [];
 }
 
-// ─── 初期化 ────────────────────────────────────────────
+function autoSave() {
+  // カスタムタグと順番は常に自動保存
+  localStorage.setItem(LS_CUSTOM, JSON.stringify(customTags));
+  localStorage.setItem(LS_ORDER,  JSON.stringify(tagOrder));
+}
+
+// ── ユーティリティ ────────────────────────────────────────
+const isReq = t => REQUIRED.includes(t);
+const isOpt = t => OPTIONAL.includes(t);
+const isCst = t => customTags.includes(t);
+
+function getVisible() {
+  const vis = [];
+  tagOrder.forEach(t => {
+    if (isReq(t) || activeOptional.has(t) || isCst(t)) vis.push(t);
+  });
+  // 万が一漏れた必須タグを末尾補完
+  REQUIRED.forEach(t => { if (!vis.includes(t)) vis.push(t); });
+  return vis;
+}
+
+// ── 描画 ─────────────────────────────────────────────────
 function init() {
   renderPills();
+  renderChips();
   renderTable();
 }
 
-// ─── 任意タグ ピル ─────────────────────────────────────
 function renderPills() {
   const wrap = document.getElementById('optPills');
   wrap.innerHTML = '';
   OPTIONAL.forEach(tag => {
-    const lbl = document.createElement('label');
     const on  = activeOptional.has(tag);
+    const lbl = document.createElement('label');
     lbl.className = 'pill' + (on ? ' on' : '');
-    lbl.innerHTML = `
-      <input type="checkbox" ${on ? 'checked' : ''}>
-      <span class="pill-icon">${on ? '✓' : '＋'}</span>
-      <span>${tag}</span>`;
+    lbl.innerHTML = `<input type="checkbox" ${on ? 'checked' : ''}><span>${on ? '✓ ' : ''}${tag}</span>`;
     lbl.querySelector('input').addEventListener('change', e => {
       if (e.target.checked) {
         activeOptional.add(tag);
-        if (!tagOrder.includes(tag)) tagOrder.push(tag); // 末尾に追加
+        if (!tagOrder.includes(tag)) tagOrder.push(tag);
       } else {
         activeOptional.delete(tag);
-        // tagOrder には残す（位置記憶のため）
       }
       renderPills();
       renderTable();
@@ -294,22 +349,27 @@ function renderPills() {
   });
 }
 
-// ─── テーブル描画 ──────────────────────────────────────
-function getVisible() {
-  const vis = [];
-  tagOrder.forEach(t => {
-    if (REQUIRED.includes(t) || activeOptional.has(t)) vis.push(t);
+function renderChips() {
+  const wrap = document.getElementById('customChips');
+  wrap.innerHTML = '';
+  if (customTags.length === 0) {
+    wrap.innerHTML = '<span class="no-custom">まだカスタムタグはありません</span>';
+    return;
+  }
+  customTags.forEach(tag => {
+    const chip = document.createElement('div');
+    chip.className = 'chip';
+    chip.innerHTML = `<span>${tag}</span>
+      <button class="chip-del" data-tag="${tag}" title="削除">×</button>`;
+    wrap.appendChild(chip);
   });
-  // 万が一漏れた必須タグを補完
-  REQUIRED.forEach(t => { if (!vis.includes(t)) vis.push(t); });
-  return vis;
 }
 
 function renderTable() {
   const tbody = document.getElementById('tbody');
   const vis   = getVisible();
 
-  // 入力済み内容を退避
+  // 入力中の内容を退避
   const saved = {};
   tbody.querySelectorAll('tr[data-tag]').forEach(tr => {
     saved[tr.dataset.tag] = tr.querySelector('textarea').value;
@@ -317,22 +377,23 @@ function renderTable() {
 
   tbody.innerHTML = '';
   vis.forEach((tag, i) => {
-    const isReq = REQUIRED.includes(tag);
+    const badgeCls = isReq(tag) ? 'req' : isOpt(tag) ? 'opt' : 'cst';
+    const badgeLbl = isReq(tag) ? '必須' : isOpt(tag) ? '任意' : 'カスタム';
+
     const tr = document.createElement('tr');
     tr.dataset.tag = tag;
     tr.innerHTML = `
       <td class="td-num">${i + 1}</td>
       <td class="td-tag">
-        <div class="tag-label">&lt;${tag}&gt;</div>
-        <span class="badge ${isReq ? 'req' : 'opt'}">${isReq ? '必須' : '任意'}</span>
+        <div class="tag-lbl">&lt;${tag}&gt;</div>
+        <span class="badge ${badgeCls}">${badgeLbl}</span>
       </td>
       <td><textarea placeholder="内容を入力…"></textarea></td>
-      <td class="td-move">
-        <div class="move-wrap">
-          <button class="btn-mv" title="上へ"
-            onclick="move(this,-1)" ${i === 0 ? 'disabled' : ''}>▲</button>
-          <button class="btn-mv" title="下へ"
-            onclick="move(this,1)"  ${i === vis.length - 1 ? 'disabled' : ''}>▼</button>
+      <td class="td-action">
+        <div class="action-wrap">
+          <button class="btn-mv" data-dir="-1" ${i === 0 ? 'disabled' : ''}>▲</button>
+          <button class="btn-mv" data-dir="1"  ${i === vis.length - 1 ? 'disabled' : ''}>▼</button>
+          ${isCst(tag) ? '<button class="btn-row-del" title="削除">×</button>' : ''}
         </div>
       </td>`;
     if (saved[tag]) tr.querySelector('textarea').value = saved[tag];
@@ -340,83 +401,92 @@ function renderTable() {
   });
 }
 
-// ─── 行移動 ────────────────────────────────────────────
-function move(btn, dir) {
-  const tag = btn.closest('tr').dataset.tag;
+// ── 移動 ─────────────────────────────────────────────────
+function moveRow(tag, dir) {
   const vis = getVisible();
   const i   = vis.indexOf(tag);
   const j   = i + dir;
   if (j < 0 || j >= vis.length) return;
-
-  // tagOrder 上で2タグの位置を swap
   const pi = tagOrder.indexOf(vis[i]);
   const pj = tagOrder.indexOf(vis[j]);
   [tagOrder[pi], tagOrder[pj]] = [tagOrder[pj], tagOrder[pi]];
-
   renderTable();
 }
 
-// ─── 保存 / リセット ───────────────────────────────────
+// ── カスタムタグ追加/削除 ────────────────────────────────
+function addCustom() {
+  const input = document.getElementById('customInput');
+  const name  = input.value.trim();
+  if (!name) return;
+
+  const allExisting = [...REQUIRED, ...OPTIONAL, ...customTags];
+  if (allExisting.some(t => t.toLowerCase() === name.toLowerCase())) {
+    alert(`"${name}" はすでに存在します。`);
+    return;
+  }
+  customTags.push(name);
+  if (!tagOrder.includes(name)) tagOrder.push(name);
+  autoSave();
+  input.value = '';
+  renderChips();
+  renderTable();
+}
+
+function removeCustom(name) {
+  if (!confirm(`カスタムタグ "${name}" を削除しますか？`)) return;
+  customTags = customTags.filter(t => t !== name);
+  tagOrder   = tagOrder.filter(t => t !== name);
+  autoSave();
+  renderChips();
+  renderTable();
+}
+
+// ── 保存 / リセット ───────────────────────────────────────
 function saveOrder() {
   localStorage.setItem(LS_ORDER, JSON.stringify(tagOrder));
   localStorage.setItem(LS_OPT,   JSON.stringify([...activeOptional]));
-
   const btn = document.getElementById('saveBtn');
   btn.textContent = '✅ 保存しました';
   btn.classList.add('done');
   document.getElementById('saveTs').textContent =
     new Date().toLocaleTimeString('ja-JP') + ' に保存';
-  setTimeout(() => {
-    btn.textContent = '💾 タグ順を保存';
-    btn.classList.remove('done');
-  }, 2000);
+  setTimeout(() => { btn.textContent = '💾 タグ順を保存'; btn.classList.remove('done'); }, 2000);
 }
 
 function resetOrder() {
-  if (!confirm('タグの順番と任意タグの選択をデフォルトに戻しますか？')) return;
-  localStorage.removeItem(LS_ORDER);
-  localStorage.removeItem(LS_OPT);
+  if (!confirm('タグの順番・任意タグ・カスタムタグをすべてリセットしますか？')) return;
+  [LS_ORDER, LS_OPT, LS_CUSTOM].forEach(k => localStorage.removeItem(k));
+  customTags     = [];
   tagOrder       = [...REQUIRED];
   activeOptional = new Set();
-  renderPills();
-  renderTable();
   document.getElementById('saveTs').textContent = '';
+  renderPills(); renderChips(); renderTable();
 }
 
-// ─── プロンプト生成 ────────────────────────────────────
+// ── 生成 / コピー ─────────────────────────────────────────
 function generate() {
   let result = '';
   document.querySelectorAll('#tbody tr[data-tag]').forEach(tr => {
     const tag     = tr.dataset.tag;
     const content = tr.querySelector('textarea').value.trim();
-    result += `<${tag}>\n${content}\n</${tag}>\n\n\n`;
+    result += `<${tag}>\n${content}\n</${tag}>\n`;
   });
   result = result.replace(/\n+$/, '');
-
   if (!result.trim()) { alert('内容を入力してください。'); return; }
 
-  document.getElementById('outputText').value  = result;
+  document.getElementById('outputText').value = result;
   document.getElementById('charCount').textContent =
     `文字数: ${result.length.toLocaleString()} 文字`;
-
   const card = document.getElementById('outCard');
   card.style.display = 'block';
   card.scrollIntoView({ behavior: 'smooth', block: 'start' });
-
   clip(result, true);
 }
-
-// ─── コピー ────────────────────────────────────────────
-function copyAll() { clip(document.getElementById('outputText').value, false); }
 
 function clip(text, auto) {
   navigator.clipboard.writeText(text)
     .then(() => feedback(auto))
-    .catch(() => {
-      document.getElementById('outputText').select();
-      document.execCommand('copy');
-      feedback(auto);
-    });
+    .catch(() => { document.getElementById('outputText').select(); document.execCommand('copy'); feedback(auto); });
 }
 
 function feedback(auto) {
@@ -429,6 +499,37 @@ function feedback(auto) {
   btn.textContent = '✅ コピー済み！';
   setTimeout(() => btn.textContent = '📋 ワンクリックコピー', 2000);
 }
+
+// ── イベント委譲（エスケープ不要・安全） ─────────────────
+document.getElementById('tbody').addEventListener('click', e => {
+  const row = e.target.closest('tr[data-tag]');
+  if (!row) return;
+  const tag = row.dataset.tag;
+
+  if (e.target.classList.contains('btn-mv')) {
+    moveRow(tag, Number(e.target.dataset.dir));
+  }
+  if (e.target.classList.contains('btn-row-del')) {
+    removeCustom(tag);
+  }
+});
+
+document.getElementById('customChips').addEventListener('click', e => {
+  if (e.target.classList.contains('chip-del')) {
+    removeCustom(e.target.dataset.tag);
+  }
+});
+
+document.getElementById('customInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') addCustom();
+});
+
+document.getElementById('btnAddCst').addEventListener('click', addCustom);
+document.getElementById('saveBtn').addEventListener('click', saveOrder);
+document.getElementById('resetBtn').addEventListener('click', resetOrder);
+document.getElementById('genBtn').addEventListener('click', generate);
+document.getElementById('copyBtn').addEventListener('click', () =>
+  clip(document.getElementById('outputText').value, false));
 
 init();
 </script>
