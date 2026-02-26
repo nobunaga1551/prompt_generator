@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>プロンプトジェネレーター</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Segoe UI', 'Yu Gothic UI', sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 16px;
+  padding: 28px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+}
+
+h1 { font-size: 20px; color: #2d3748; margin-bottom: 4px; }
+.subtitle { color: #718096; font-size: 12px; margin-bottom: 20px; }
+
+/* 任意タグ トグルパネル */
+.opt-panel {
+  background: #f7fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 14px 18px;
+  margin-bottom: 18px;
+}
+.opt-panel-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: #718096;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 10px;
+}
+.opt-pills { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.pill {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 14px;
+  background: #fff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 20px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+  user-select: none;
+}
+.pill:hover { border-color: #5a67d8; color: #5a67d8; }
+.pill.on { background: #ebf4ff; border-color: #5a67d8; color: #5a67d8; font-weight: 600; }
+.pill input { display: none; }
+.pill-icon { font-size: 12px; }
+
+/* テーブル */
+table { width: 100%; border-collapse: collapse; }
+thead th {
+  background: #5a67d8; color: #fff;
+  padding: 10px 12px;
+  font-size: 12px; font-weight: 600;
+  text-align: left;
+}
+thead th:first-child { border-radius: 8px 0 0 0; }
+thead th:last-child  { border-radius: 0 8px 0 0; }
+tbody tr { transition: background 0.15s; }
+tbody tr:nth-child(even) { background: #f7fafc; }
+tbody tr:hover { background: #ebf4ff; }
+td { padding: 8px; vertical-align: middle; border-bottom: 1px solid #e2e8f0; }
+
+.td-num { width: 32px; text-align: center; color: #a0aec0; font-size: 12px; }
+.td-tag { width: 200px; vertical-align: top; padding-top: 12px; }
+.tag-label {
+  font-family: 'Consolas', 'Courier New', monospace;
+  font-size: 13px; font-weight: 700; color: #2d3748;
+}
+.badge {
+  display: inline-block;
+  font-size: 10px; padding: 1px 7px;
+  border-radius: 10px; margin-top: 3px;
+}
+.req { background: #c6f6d5; color: #276749; }
+.opt { background: #e9d8fd; color: #6b46c1; }
+
+textarea {
+  width: 100%; padding: 8px 10px;
+  border: 1.5px solid #e2e8f0; border-radius: 6px;
+  font-size: 13px; font-family: inherit;
+  resize: vertical; min-height: 52px; line-height: 1.5;
+  transition: border-color 0.2s;
+}
+textarea:focus {
+  outline: none; border-color: #5a67d8;
+  box-shadow: 0 0 0 3px rgba(90,103,216,0.15);
+}
+
+/* 移動ボタン */
+.td-move { width: 48px; text-align: center; }
+.move-wrap { display: flex; flex-direction: column; gap: 3px; align-items: center; }
+.btn-mv {
+  width: 26px; height: 22px;
+  background: #edf2f7; color: #4a5568;
+  border: 1px solid #e2e8f0; border-radius: 4px;
+  font-size: 10px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s;
+}
+.btn-mv:hover:not(:disabled) { background: #5a67d8; color: #fff; border-color: #5a67d8; }
+.btn-mv:disabled { opacity: 0.2; cursor: default; }
+
+/* ツールバー */
+.toolbar {
+  display: flex; gap: 10px;
+  margin: 16px 0 20px;
+  align-items: center; flex-wrap: wrap;
+}
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 9px 18px; border: none; border-radius: 8px;
+  font-size: 13px; font-weight: 600; cursor: pointer;
+  font-family: inherit; transition: all 0.2s;
+}
+.btn:hover { transform: translateY(-1px); }
+.btn-save     { background: #e2e8f0; color: #4a5568; }
+.btn-save:hover { background: #cbd5e0; }
+.btn-save.done  { background: #c6f6d5; color: #276749; }
+.btn-reset    { background: #fff; color: #e53e3e; border: 1.5px solid #fed7d7; }
+.btn-reset:hover { background: #fff5f5; }
+.btn-gen      { background: #5a67d8; color: #fff; margin-left: auto; }
+.btn-gen:hover { background: #4c51bf; box-shadow: 0 4px 12px rgba(90,103,216,0.4); }
+.save-ts { font-size: 11px; color: #a0aec0; }
+
+/* 出力 */
+.out-card {
+  margin-top: 20px;
+  border: 1.5px solid #c6f6d5;
+  border-radius: 12px; overflow: hidden;
+  display: none;
+}
+.out-header {
+  background: #f0fff4; padding: 12px 18px;
+  display: flex; justify-content: space-between;
+  align-items: center; flex-wrap: wrap; gap: 8px;
+}
+.out-title { font-weight: 700; color: #276749; font-size: 14px; }
+.copy-row  { display: flex; align-items: center; gap: 10px; }
+.copy-badge {
+  background: #c6f6d5; color: #276749;
+  padding: 3px 10px; border-radius: 20px;
+  font-size: 12px; font-weight: 600;
+  opacity: 0; transition: opacity 0.3s;
+}
+.copy-badge.on { opacity: 1; }
+.btn-copy { background: #38a169; color: #fff; padding: 10px 22px; font-size: 14px; }
+.btn-copy:hover { background: #2f855a; box-shadow: 0 4px 12px rgba(56,161,105,0.4); }
+
+#outputText {
+  display: block; width: 100%;
+  padding: 14px 18px; border: none;
+  font-family: 'Consolas', 'Courier New', monospace;
+  font-size: 13px; line-height: 1.75;
+  background: #fafafa; resize: vertical; min-height: 260px;
+  color: #2d3748;
+}
+#outputText:focus { outline: none; }
+.char-count {
+  text-align: right; padding: 6px 18px;
+  font-size: 12px; color: #718096;
+  background: #f7fafc; border-top: 1px solid #e2e8f0;
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>🚀 プロンプトジェネレーター</h1>
+  <p class="subtitle">
+    必須タグ（4）は常時表示 ／ 任意タグ（4）はクリックで追加 ／ ▲▼で順番変更 ／ 順番は保存可
+  </p>
+
+  <!-- 任意タグ切り替え -->
+  <div class="opt-panel">
+    <div class="opt-panel-title">任意タグ — クリックで追加 / 非表示</div>
+    <div class="opt-pills" id="optPills"></div>
+  </div>
+
+  <!-- 入力テーブル -->
+  <table>
+    <thead>
+      <tr>
+        <th style="width:32px">#</th>
+        <th style="width:200px">タグ</th>
+        <th>内容</th>
+        <th style="width:48px; text-align:center">順番</th>
+      </tr>
+    </thead>
+    <tbody id="tbody"></tbody>
+  </table>
+
+  <div class="toolbar">
+    <button class="btn btn-save" id="saveBtn" onclick="saveOrder()">💾 タグ順を保存</button>
+    <button class="btn btn-reset" onclick="resetOrder()">↺ リセット</button>
+    <span class="save-ts" id="saveTs"></span>
+    <button class="btn btn-gen" onclick="generate()">⚡ プロンプト生成</button>
+  </div>
+
+  <!-- 出力 -->
+  <div class="out-card" id="outCard">
+    <div class="out-header">
+      <span class="out-title">📄 生成されたプロンプト</span>
+      <div class="copy-row">
+        <span class="copy-badge" id="copyBadge">✅ コピーしました！</span>
+        <button class="btn btn-copy" id="copyBtn" onclick="copyAll()">📋 ワンクリックコピー</button>
+      </div>
+    </div>
+    <textarea id="outputText" readonly></textarea>
+    <div class="char-count" id="charCount"></div>
+  </div>
+</div>
+
+<script>
+// ─── 定数 ──────────────────────────────────────────────
+const REQUIRED = ['Objective', 'Persona', 'Instructions', 'Context'];
+const OPTIONAL  = ['Constraints', 'Response format', 'Reasoning steps', 'Examples'];
+const ALL_TAGS  = [...REQUIRED, ...OPTIONAL];
+
+const LS_ORDER = 'pg_tag_order_v2';
+const LS_OPT   = 'pg_optional_v2';
+
+// ─── 状態 ──────────────────────────────────────────────
+let tagOrder      = loadOrder();        // 全タグの並び順（非表示のものも保持）
+let activeOptional = new Set(loadOpt()); // 現在表示中の任意タグ
+
+// ─── LocalStorage ─────────────────────────────────────
+function loadOrder() {
+  try {
+    const s = JSON.parse(localStorage.getItem(LS_ORDER));
+    if (Array.isArray(s)) {
+      const filtered = s.filter(t => ALL_TAGS.includes(t));
+      // 漏れた必須タグを末尾補完
+      REQUIRED.forEach(t => { if (!filtered.includes(t)) filtered.push(t); });
+      return filtered;
+    }
+  } catch {}
+  return [...REQUIRED];
+}
+
+function loadOpt() {
+  try {
+    const s = JSON.parse(localStorage.getItem(LS_OPT));
+    if (Array.isArray(s)) return s.filter(t => OPTIONAL.includes(t));
+  } catch {}
+  return [];
+}
+
+// ─── 初期化 ────────────────────────────────────────────
+function init() {
+  renderPills();
+  renderTable();
+}
+
+// ─── 任意タグ ピル ─────────────────────────────────────
+function renderPills() {
+  const wrap = document.getElementById('optPills');
+  wrap.innerHTML = '';
+  OPTIONAL.forEach(tag => {
+    const lbl = document.createElement('label');
+    const on  = activeOptional.has(tag);
+    lbl.className = 'pill' + (on ? ' on' : '');
+    lbl.innerHTML = `
+      <input type="checkbox" ${on ? 'checked' : ''}>
+      <span class="pill-icon">${on ? '✓' : '＋'}</span>
+      <span>${tag}</span>`;
+    lbl.querySelector('input').addEventListener('change', e => {
+      if (e.target.checked) {
+        activeOptional.add(tag);
+        if (!tagOrder.includes(tag)) tagOrder.push(tag); // 末尾に追加
+      } else {
+        activeOptional.delete(tag);
+        // tagOrder には残す（位置記憶のため）
+      }
+      renderPills();
+      renderTable();
+    });
+    wrap.appendChild(lbl);
+  });
+}
+
+// ─── テーブル描画 ──────────────────────────────────────
+function getVisible() {
+  const vis = [];
+  tagOrder.forEach(t => {
+    if (REQUIRED.includes(t) || activeOptional.has(t)) vis.push(t);
+  });
+  // 万が一漏れた必須タグを補完
+  REQUIRED.forEach(t => { if (!vis.includes(t)) vis.push(t); });
+  return vis;
+}
+
+function renderTable() {
+  const tbody = document.getElementById('tbody');
+  const vis   = getVisible();
+
+  // 入力済み内容を退避
+  const saved = {};
+  tbody.querySelectorAll('tr[data-tag]').forEach(tr => {
+    saved[tr.dataset.tag] = tr.querySelector('textarea').value;
+  });
+
+  tbody.innerHTML = '';
+  vis.forEach((tag, i) => {
+    const isReq = REQUIRED.includes(tag);
+    const tr = document.createElement('tr');
+    tr.dataset.tag = tag;
+    tr.innerHTML = `
+      <td class="td-num">${i + 1}</td>
+      <td class="td-tag">
+        <div class="tag-label">&lt;${tag}&gt;</div>
+        <span class="badge ${isReq ? 'req' : 'opt'}">${isReq ? '必須' : '任意'}</span>
+      </td>
+      <td><textarea placeholder="内容を入力…"></textarea></td>
+      <td class="td-move">
+        <div class="move-wrap">
+          <button class="btn-mv" title="上へ"
+            onclick="move(this,-1)" ${i === 0 ? 'disabled' : ''}>▲</button>
+          <button class="btn-mv" title="下へ"
+            onclick="move(this,1)"  ${i === vis.length - 1 ? 'disabled' : ''}>▼</button>
+        </div>
+      </td>`;
+    if (saved[tag]) tr.querySelector('textarea').value = saved[tag];
+    tbody.appendChild(tr);
+  });
+}
+
+// ─── 行移動 ────────────────────────────────────────────
+function move(btn, dir) {
+  const tag = btn.closest('tr').dataset.tag;
+  const vis = getVisible();
+  const i   = vis.indexOf(tag);
+  const j   = i + dir;
+  if (j < 0 || j >= vis.length) return;
+
+  // tagOrder 上で2タグの位置を swap
+  const pi = tagOrder.indexOf(vis[i]);
+  const pj = tagOrder.indexOf(vis[j]);
+  [tagOrder[pi], tagOrder[pj]] = [tagOrder[pj], tagOrder[pi]];
+
+  renderTable();
+}
+
+// ─── 保存 / リセット ───────────────────────────────────
+function saveOrder() {
+  localStorage.setItem(LS_ORDER, JSON.stringify(tagOrder));
+  localStorage.setItem(LS_OPT,   JSON.stringify([...activeOptional]));
+
+  const btn = document.getElementById('saveBtn');
+  btn.textContent = '✅ 保存しました';
+  btn.classList.add('done');
+  document.getElementById('saveTs').textContent =
+    new Date().toLocaleTimeString('ja-JP') + ' に保存';
+  setTimeout(() => {
+    btn.textContent = '💾 タグ順を保存';
+    btn.classList.remove('done');
+  }, 2000);
+}
+
+function resetOrder() {
+  if (!confirm('タグの順番と任意タグの選択をデフォルトに戻しますか？')) return;
+  localStorage.removeItem(LS_ORDER);
+  localStorage.removeItem(LS_OPT);
+  tagOrder       = [...REQUIRED];
+  activeOptional = new Set();
+  renderPills();
+  renderTable();
+  document.getElementById('saveTs').textContent = '';
+}
+
+// ─── プロンプト生成 ────────────────────────────────────
+function generate() {
+  let result = '';
+  document.querySelectorAll('#tbody tr[data-tag]').forEach(tr => {
+    const tag     = tr.dataset.tag;
+    const content = tr.querySelector('textarea').value.trim();
+    result += `<${tag}>\n${content}\n</${tag}>\n\n\n`;
+  });
+  result = result.replace(/\n+$/, '');
+
+  if (!result.trim()) { alert('内容を入力してください。'); return; }
+
+  document.getElementById('outputText').value  = result;
+  document.getElementById('charCount').textContent =
+    `文字数: ${result.length.toLocaleString()} 文字`;
+
+  const card = document.getElementById('outCard');
+  card.style.display = 'block';
+  card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  clip(result, true);
+}
+
+// ─── コピー ────────────────────────────────────────────
+function copyAll() { clip(document.getElementById('outputText').value, false); }
+
+function clip(text, auto) {
+  navigator.clipboard.writeText(text)
+    .then(() => feedback(auto))
+    .catch(() => {
+      document.getElementById('outputText').select();
+      document.execCommand('copy');
+      feedback(auto);
+    });
+}
+
+function feedback(auto) {
+  if (!auto) {
+    const b = document.getElementById('copyBadge');
+    b.classList.add('on');
+    setTimeout(() => b.classList.remove('on'), 2500);
+  }
+  const btn = document.getElementById('copyBtn');
+  btn.textContent = '✅ コピー済み！';
+  setTimeout(() => btn.textContent = '📋 ワンクリックコピー', 2000);
+}
+
+init();
+</script>
+</body>
+</html>
