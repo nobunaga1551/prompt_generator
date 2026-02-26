@@ -20,7 +20,6 @@ body {
 h1 { font-size: 20px; color: #2d3748; margin-bottom: 4px; }
 .subtitle { color: #718096; font-size: 12px; margin-bottom: 20px; }
 
-/* ── パネル ── */
 .opt-panel {
   background: #f7fafc; border: 1.5px solid #e2e8f0;
   border-radius: 10px; padding: 16px 18px; margin-bottom: 18px;
@@ -77,7 +76,6 @@ h1 { font-size: 20px; color: #2d3748; margin-bottom: 4px; }
 .chip-del:hover { color: #9c2600; }
 .no-custom { font-size: 12px; color: #a0aec0; font-style: italic; }
 
-/* ── テーブル（PC） ── */
 table { width: 100%; border-collapse: collapse; }
 thead th {
   background: #5a67d8; color: #fff;
@@ -133,7 +131,6 @@ textarea:focus {
 }
 .btn-row-del:hover { background: #e53e3e; color: #fff; border-color: #e53e3e; }
 
-/* ── ツールバー ── */
 .toolbar {
   display: flex; gap: 10px; margin: 16px 0 20px;
   align-items: center; flex-wrap: wrap;
@@ -154,7 +151,6 @@ textarea:focus {
 .btn-gen:hover  { background: #4c51bf; box-shadow: 0 4px 12px rgba(90,103,216,0.4); }
 .save-ts        { font-size: 11px; color: #a0aec0; }
 
-/* ── 出力 ── */
 .out-card {
   margin-top: 20px; border: 1.5px solid #c6f6d5;
   border-radius: 12px; overflow: hidden; display: none;
@@ -174,7 +170,7 @@ textarea:focus {
 }
 .copy-badge.on { opacity: 1; }
 .btn-copy       { background: #38a169; color: #fff; padding: 10px 22px; font-size: 14px; }
-.btn-copy:hover { background: #2f855a; box-shadow: 0 4px 12px rgba(56,161,105,0.4); }
+.btn-copy:hover { background: #2f855a; }
 
 #outputText {
   display: block; width: 100%; padding: 14px 18px; border: none;
@@ -189,73 +185,45 @@ textarea:focus {
   background: #f7fafc; border-top: 1px solid #e2e8f0;
 }
 
-/* ══════════════════════════════════════════════════
-   レスポンシブ：スマホ対応 (≤ 640px)
-   テーブル行 → カードレイアウトに切り替え
-   ══════════════════════════════════════════════════ */
+/* ── レスポンシブ (≤640px) ── */
 @media (max-width: 640px) {
   body { padding: 12px; }
   .container { padding: 16px 14px; border-radius: 12px; }
   h1 { font-size: 17px; }
-
-  /* パネル：入力欄を縦積みに */
   .custom-row { flex-direction: column; }
   .btn-add-cst { width: 100%; padding: 10px; }
 
-  /* テーブルをブロック要素に変換 */
   table, tbody { display: block; }
-  thead        { display: none; }  /* ヘッダー行は不要 */
+  thead        { display: none; }
 
-  /* 各行をカード化 */
   tr[data-tag] {
     display: grid;
     grid-template-columns: 1fr auto;
-    grid-template-areas:
-      "tag    action"
-      "cont   cont";
+    grid-template-areas: "tag action" "cont cont";
     gap: 8px 10px;
-    border: 1.5px solid #e2e8f0;
-    border-radius: 10px;
-    margin-bottom: 10px;
-    padding: 12px;
-    background: #fff;
+    border: 1.5px solid #e2e8f0; border-radius: 10px;
+    margin-bottom: 10px; padding: 12px; background: #fff;
     box-shadow: 0 1px 6px rgba(0,0,0,0.07);
   }
-
-  /* 偶数行・ホバー背景はカードモードでは無効化 */
   tbody tr:nth-child(even),
   tbody tr:hover { background: #fff; }
-
-  /* セルのborder-bottomをリセット */
   tr[data-tag] td { border-bottom: none; padding: 0; }
 
-  /* グリッド配置 */
   .td-num     { display: none; }
   .td-tag     { grid-area: tag;    align-self: center; }
   .td-content { grid-area: cont; }
   .td-action  { grid-area: action; align-self: start; }
 
-  /* テキストエリアを広く・文字を読みやすく */
-  textarea {
-    min-height: 90px;
-    font-size: 15px;
-    padding: 10px 12px;
-  }
+  textarea { min-height: 90px; font-size: 15px; padding: 10px 12px; }
 
-  /* アクションボタンを横並び・タップしやすいサイズに */
   .action-wrap  { flex-direction: row; gap: 6px; }
   .btn-mv,
-  .btn-row-del  { width: 40px; height: 40px; font-size: 14px; }
-  .btn-row-del  { margin-top: 0; }
+  .btn-row-del  { width: 40px; height: 40px; font-size: 14px; margin-top: 0; }
 
-  /* ツールバーを縦積みに */
   .toolbar { flex-direction: column; align-items: stretch; gap: 8px; }
-  .btn-save,
-  .btn-reset,
-  .btn-gen  { width: 100%; padding: 12px; margin-left: 0; }
-  .save-ts  { text-align: center; }
+  .btn-save, .btn-reset, .btn-gen { width: 100%; padding: 12px; margin-left: 0; }
+  .save-ts { text-align: center; }
 
-  /* 出力エリア */
   .out-header { flex-direction: column; align-items: stretch; }
   .copy-row   { flex-direction: column; align-items: stretch; }
   .btn-copy   { width: 100%; padding: 12px; }
@@ -273,9 +241,7 @@ textarea:focus {
   <div class="opt-panel">
     <div class="sec-title">定義済み任意タグ — クリックでON / OFF</div>
     <div class="opt-pills" id="optPills"></div>
-
     <hr class="divider">
-
     <div class="sec-title">カスタムタグ — 自由に追加（自動保存）</div>
     <div class="custom-row">
       <input type="text" id="customInput"
@@ -330,6 +296,18 @@ let customTags     = loadCustom();
 let tagOrder       = loadOrder();
 let activeOptional = new Set(loadOpt());
 
+// ── ✅ XSS対策：HTMLエスケープ関数 ──────────────────────
+// innerHTML に変数を埋め込む際は必ずこれを通す
+function escHtml(s) {
+  return String(s)
+    .replace(/&/g,  '&amp;')
+    .replace(/</g,  '&lt;')
+    .replace(/>/g,  '&gt;')
+    .replace(/"/g,  '&quot;')
+    .replace(/'/g,  '&#39;');
+}
+
+// ── LocalStorage ─────────────────────────────────────────
 function loadCustom() {
   try {
     const s = JSON.parse(localStorage.getItem(LS_CUSTOM));
@@ -383,7 +361,9 @@ function renderPills() {
     const on  = activeOptional.has(tag);
     const lbl = document.createElement('label');
     lbl.className = 'pill' + (on ? ' on' : '');
-    lbl.innerHTML = `<input type="checkbox" ${on ? 'checked' : ''}><span>${on ? '✓ ' : ''}${tag}</span>`;
+    // OPTIONAL は固定値なのでエスケープ不要だが念のため適用
+    lbl.innerHTML = `<input type="checkbox" ${on ? 'checked' : ''}>
+      <span>${on ? '✓ ' : ''}${escHtml(tag)}</span>`;
     lbl.querySelector('input').addEventListener('change', e => {
       if (e.target.checked) {
         activeOptional.add(tag);
@@ -407,8 +387,9 @@ function renderChips() {
   customTags.forEach(tag => {
     const chip = document.createElement('div');
     chip.className = 'chip';
-    chip.innerHTML = `<span>${tag}</span>
-      <button class="chip-del" data-tag="${tag}" title="削除">×</button>`;
+    // ✅ escHtml でタグ名をエスケープ（XSS対策）
+    chip.innerHTML = `<span>${escHtml(tag)}</span>
+      <button class="chip-del" data-tag="${escHtml(tag)}" title="削除">×</button>`;
     wrap.appendChild(chip);
   });
 }
@@ -425,11 +406,12 @@ function renderTable() {
     const badgeCls = isReq(tag) ? 'req' : isOpt(tag) ? 'opt' : 'cst';
     const badgeLbl = isReq(tag) ? '必須' : isOpt(tag) ? '任意' : 'カスタム';
     const tr = document.createElement('tr');
-    tr.dataset.tag = tag;
+    tr.dataset.tag = tag; // dataset への直接代入は安全
+    // ✅ escHtml でタグ名をエスケープ（XSS対策）
     tr.innerHTML = `
       <td class="td-num">${i + 1}</td>
       <td class="td-tag">
-        <div class="tag-lbl">&lt;${tag}&gt;</div>
+        <div class="tag-lbl">&lt;${escHtml(tag)}&gt;</div>
         <span class="badge ${badgeCls}">${badgeLbl}</span>
       </td>
       <td class="td-content"><textarea placeholder="内容を入力…"></textarea></td>
@@ -460,6 +442,7 @@ function addCustom() {
   const input = document.getElementById('customInput');
   const name  = input.value.trim();
   if (!name) return;
+  // ✅ 重複チェックは大文字小文字を無視して比較
   const all = [...REQUIRED, ...OPTIONAL, ...customTags];
   if (all.some(t => t.toLowerCase() === name.toLowerCase())) {
     alert(`"${name}" はすでに存在します。`); return;
@@ -503,7 +486,8 @@ function generate() {
   document.querySelectorAll('#tbody tr[data-tag]').forEach(tr => {
     const tag     = tr.dataset.tag;
     const content = tr.querySelector('textarea').value.trim();
-    result += `<${tag}>\n${content}\n</${tag}>\n\n\n`;
+    // ✅ 改行1行に変更（\n\n\n → \n\n）
+    result += `<${tag}>\n${content}\n</${tag}>\n\n`;
   });
   result = result.replace(/\n+$/, '');
   if (!result.trim()) { alert('内容を入力してください。'); return; }
@@ -519,7 +503,11 @@ function generate() {
 function clip(text, auto) {
   navigator.clipboard.writeText(text)
     .then(() => feedback(auto))
-    .catch(() => { document.getElementById('outputText').select(); document.execCommand('copy'); feedback(auto); });
+    .catch(() => {
+      document.getElementById('outputText').select();
+      document.execCommand('copy');
+      feedback(auto);
+    });
 }
 function feedback(auto) {
   if (!auto) {
@@ -532,7 +520,6 @@ function feedback(auto) {
   setTimeout(() => btn.textContent = '📋 ワンクリックコピー', 2000);
 }
 
-/* ── イベント委譲 ── */
 document.getElementById('tbody').addEventListener('click', e => {
   const row = e.target.closest('tr[data-tag]');
   if (!row) return;
