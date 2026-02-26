@@ -91,6 +91,8 @@ td { padding: 8px; vertical-align: middle; border-bottom: 1px solid #e2e8f0; }
 .td-num  { width: 32px; text-align: center; color: #a0aec0; font-size: 12px; }
 .td-tag  { width: 200px; vertical-align: top; padding-top: 11px; }
 .tag-lbl { font-family: 'Consolas','Courier New',monospace; font-size: 13px; font-weight: 700; color: #2d3748; }
+/* ✅ 追加：日本語サブラベル */
+.tag-ja  { font-size: 11px; color: #a0aec0; margin-top: 3px; }
 
 .badge { display: inline-block; font-size: 10px; padding: 1px 7px; border-radius: 10px; margin-top: 3px; }
 .req   { background: #c6f6d5; color: #276749; }
@@ -292,12 +294,40 @@ const LS_ORDER  = 'pg_order_v3';
 const LS_OPT    = 'pg_opt_v3';
 const LS_CUSTOM = 'pg_custom_v3';
 
-let customTags     = loadCustom();
-let tagOrder       = loadOrder();
-let activeOptional = new Set(loadOpt());
+// ✅ 追加①：日本語サブラベル（UI表示用のみ）
+const LABELS = {
+  'Objective':       '目的・ゴール',
+  'Persona':         '役割・専門性',
+  'Instructions':    '具体的な指示',
+  'Context':         '背景・前提情報',
+  'Constraints':     '制約・条件',
+  'Response format': '出力形式',
+  'Reasoning steps': '思考手順',
+  'Examples':        '入出力例',
+};
 
-// ── ✅ XSS対策：HTMLエスケープ関数 ──────────────────────
-// innerHTML に変数を埋め込む際は必ずこれを通す
+// ✅ 追加②：入力欄のプレースホルダー例文
+const PLACEHOLDERS = {
+  'Objective':
+    '例：3泊4日の京都旅行プランを提案してください',
+  'Persona':
+    '例：京都に詳しい旅行好きな地元の友人',
+  'Instructions':
+    '例：食事・観光・移動をバランスよく含めること。観光地は1日3箇所まで',
+  'Context':
+    '例：20代カップル・初めての京都・予算は1人あたり5万円',
+  'Constraints':
+    '例：混雑するスポットは避ける。移動は電車かバスのみ',
+  'Response format':
+    '例：1日ごとに「午前／昼／午後／夜」の時系列で箇条書き',
+  'Reasoning steps':
+    '例：① 移動ルート確認 → ② 食事スポット選定 → ③ 所要時間を計算',
+  'Examples':
+    '例：入力「雨の日」→ 出力「屋内スポット優先プラン：錦市場、二条城…」',
+};
+const DEFAULT_PLACEHOLDER = '内容を入力…';
+
+// ── XSS対策 ──────────────────────────────────────────────
 function escHtml(s) {
   return String(s)
     .replace(/&/g,  '&amp;')
@@ -308,6 +338,10 @@ function escHtml(s) {
 }
 
 // ── LocalStorage ─────────────────────────────────────────
+let customTags     = loadCustom();
+let tagOrder       = loadOrder();
+let activeOptional = new Set(loadOpt());
+
 function loadCustom() {
   try {
     const s = JSON.parse(localStorage.getItem(LS_CUSTOM));
@@ -361,7 +395,6 @@ function renderPills() {
     const on  = activeOptional.has(tag);
     const lbl = document.createElement('label');
     lbl.className = 'pill' + (on ? ' on' : '');
-    // OPTIONAL は固定値なのでエスケープ不要だが念のため適用
     lbl.innerHTML = `<input type="checkbox" ${on ? 'checked' : ''}>
       <span>${on ? '✓ ' : ''}${escHtml(tag)}</span>`;
     lbl.querySelector('input').addEventListener('change', e => {
@@ -387,7 +420,6 @@ function renderChips() {
   customTags.forEach(tag => {
     const chip = document.createElement('div');
     chip.className = 'chip';
-    // ✅ escHtml でタグ名をエスケープ（XSS対策）
     chip.innerHTML = `<span>${escHtml(tag)}</span>
       <button class="chip-del" data-tag="${escHtml(tag)}" title="削除">×</button>`;
     wrap.appendChild(chip);
@@ -403,18 +435,24 @@ function renderTable() {
   });
   tbody.innerHTML = '';
   vis.forEach((tag, i) => {
-    const badgeCls = isReq(tag) ? 'req' : isOpt(tag) ? 'opt' : 'cst';
-    const badgeLbl = isReq(tag) ? '必須' : isOpt(tag) ? '任意' : 'カスタム';
+    const badgeCls  = isReq(tag) ? 'req' : isOpt(tag) ? 'opt' : 'cst';
+    const badgeLbl  = isReq(tag) ? '必須' : isOpt(tag) ? '任意' : 'カスタム';
+    // ✅ 日本語ラベルとプレースホルダーを取得
+    const jaLabel   = LABELS[tag] || '';
+    const phText    = PLACEHOLDERS[tag] || DEFAULT_PLACEHOLDER;
+
     const tr = document.createElement('tr');
-    tr.dataset.tag = tag; // dataset への直接代入は安全
-    // ✅ escHtml でタグ名をエスケープ（XSS対策）
+    tr.dataset.tag = tag;
     tr.innerHTML = `
       <td class="td-num">${i + 1}</td>
       <td class="td-tag">
         <div class="tag-lbl">&lt;${escHtml(tag)}&gt;</div>
         <span class="badge ${badgeCls}">${badgeLbl}</span>
+        ${jaLabel ? `<div class="tag-ja">${escHtml(jaLabel)}</div>` : ''}
       </td>
-      <td class="td-content"><textarea placeholder="内容を入力…"></textarea></td>
+      <td class="td-content">
+        <textarea placeholder="${escHtml(phText)}"></textarea>
+      </td>
       <td class="td-action">
         <div class="action-wrap">
           <button class="btn-mv" data-dir="-1" ${i === 0 ? 'disabled' : ''}>▲</button>
@@ -442,7 +480,6 @@ function addCustom() {
   const input = document.getElementById('customInput');
   const name  = input.value.trim();
   if (!name) return;
-  // ✅ 重複チェックは大文字小文字を無視して比較
   const all = [...REQUIRED, ...OPTIONAL, ...customTags];
   if (all.some(t => t.toLowerCase() === name.toLowerCase())) {
     alert(`"${name}" はすでに存在します。`); return;
@@ -486,7 +523,6 @@ function generate() {
   document.querySelectorAll('#tbody tr[data-tag]').forEach(tr => {
     const tag     = tr.dataset.tag;
     const content = tr.querySelector('textarea').value.trim();
-    // ✅ 改行1行に変更（\n\n\n → \n\n）
     result += `<${tag}>\n${content}\n</${tag}>\n\n`;
   });
   result = result.replace(/\n+$/, '');
