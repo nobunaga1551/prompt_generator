@@ -519,31 +519,50 @@ function resetOrder() {
 }
 
 function generate() {
-  let result = '';
+  const parts = [];
+  const present = new Set();
   document.querySelectorAll('#tbody tr[data-tag]').forEach(tr => {
     const tag     = tr.dataset.tag;
     const content = tr.querySelector('textarea').value.trim();
-    result += `<${tag}>\n${content}\n</${tag}>\n\n`;
+    if (!content) return; // 空ならスキップ
+    parts.push(`<${tag}>\n${content}\n</${tag}>`);
+    present.add(tag);
   });
-  result = result.replace(/\n+$/, '');
-  if (!result.trim()) { alert('内容を入力してください。'); return; }
+  if (parts.length === 0) { alert('内容を入力してください。'); return; }
+  // 必須タグが埋まっているか確認
+  const missing = REQUIRED.filter(t => !present.has(t));
+  if (missing.length) {
+    alert('必須タグが入力されていません: ' + missing.join(', '));
+    return;
+  }
+  const result = parts.join('\n\n');
   document.getElementById('outputText').value = result;
   document.getElementById('charCount').textContent =
     `文字数: ${result.length.toLocaleString()} 文字`;
   const card = document.getElementById('outCard');
   card.style.display = 'block';
-  card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  if (typeof card.scrollIntoView === 'function') {
+    card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
   clip(result, true);
 }
 
 function clip(text, auto) {
-  navigator.clipboard.writeText(text)
-    .then(() => feedback(auto))
-    .catch(() => {
-      document.getElementById('outputText').select();
-      document.execCommand('copy');
-      feedback(auto);
-    });
+  if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+    navigator.clipboard.writeText(text)
+      .then(() => feedback(auto))
+      .catch(() => {
+        const out = document.getElementById('outputText');
+        out.select();
+        try { document.execCommand('copy'); } catch (e) {}
+        feedback(auto);
+      });
+  } else {
+    const out = document.getElementById('outputText');
+    out.select();
+    try { document.execCommand('copy'); } catch (e) {}
+    feedback(auto);
+  }
 }
 function feedback(auto) {
   if (!auto) {
